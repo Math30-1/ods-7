@@ -1,36 +1,103 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - Energiacessivel</title>
-    <link rel="stylesheet" href="styles.css">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Login — EcoEnergia</title>
+
+  <!-- Seu CSS -->
+  <link rel="stylesheet" href="styles.css" />
+
+  <!-- Font Awesome (versão compatível com fa fa-bars/fa-times) -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
+
+  <!-- Script principal (defer para carregar depois do DOM) -->
+  <script defer src="script.js"></script>
 </head>
 <body>
-    <div class="login-container">
-        <div class="login-form">
-            <div class="login-header">
-                <i class="fas fa-leaf"></i>
-                <h2>Entrar</h2>
-            </div>
-            <form action="#" method="POST">
-                <div class="input-group">
-                    <label for="username">Nome de Usuário</label>
-                    <input type="text" id="username" name="username" required>
-                </div>
-                <div class="input-group">
-                    <label for="password">Senha</label>
-                    <input type="password" id="password" name="password" required>
-                </div>
-                <button type="submit" class="btn-primary login-btn">Entrar</button>
-            </form>
-            <div class="login-footer">
-                <a href="#">Esqueceu sua senha?</a>
-                <span>Não tem uma conta? <a href="#">Cadastre-se</a></span>
-            </div>
+  <header class="header">
+    <button id="mobileMenuBtn" aria-label="Abrir menu"><i class="fa fa-bars" aria-hidden="true"></i></button>
+    <nav id="navMenu" class="nav-menu">
+      <a href="index.html">Início</a>
+      <a href="login.html" aria-current="page">Login</a>
+    </nav>
+  </header>
+
+  <main class="container">
+    <section class="login-section">
+      <h1>Entrar</h1>
+      <p>Faça login para acessar seu painel de consumo.</p>
+
+      <form id="loginForm" autocomplete="on" novalidate>
+        <label for="email">E-mail</label>
+        <input
+          type="email"
+          id="email"
+          name="email"
+          placeholder="seu@exemplo.com"
+          required
+          autofocus
+        />
+
+        <label for="senha">Senha</label>
+        <div class="password-wrapper" style="display:flex;align-items:center;gap:.5rem;">
+          <input
+            type="password"
+            id="senha"
+            name="senha"
+            placeholder="••••••••"
+            required
+            style="flex:1;"
+          />
+          <!-- Botão opcional para mostrar/ocultar senha -->
+          <button type="button" id="toggleSenha" aria-label="Mostrar senha" class="toggle-pass" title="Mostrar senha" style="background:none;border:none;cursor:pointer;">
+            <i class="fa fa-eye" aria-hidden="true"></i>
+          </button>
         </div>
-    </div>
-    <script src="login.js"></script>
+
+        <!-- Lugar para mensagens de erro (ex.: login inválido) -->
+        <div id="loginError" role="alert" aria-live="polite" style="display:none;color:#b00020;margin-top:.5rem;"></div>
+
+        <button type="submit" class="btn" style="margin-top:1rem;">Entrar</button>
+      </form>
+
+      <p class="small" style="margin-top:.75rem;"><a href="#">Esqueci minha senha</a></p>
+    </section>
+  </main>
+
+  <!-- Small inline helper: se preferir, pode apagar este bloco (script.js já faz o toggle do menu) -->
+  <script>
+    (function () {
+      // Garantir funcionamento mínimo do menu se script.js ainda não estiver pronto
+      const mobileMenuBtn = document.getElementById("mobileMenuBtn");
+      const navMenu = document.getElementById("navMenu");
+      if (mobileMenuBtn && navMenu) {
+        mobileMenuBtn.addEventListener("click", () => {
+          navMenu.classList.toggle("active");
+          const icon = mobileMenuBtn.querySelector("i");
+          icon.classList.toggle("fa-bars");
+          icon.classList.toggle("fa-times");
+        });
+      }
+
+      // Toggle para mostrar/ocultar senha (UX)
+      const toggle = document.getElementById("toggleSenha");
+      if (toggle) {
+        toggle.addEventListener("click", () => {
+          const senha = document.getElementById("senha");
+          const icon = toggle.querySelector("i");
+          if (senha.type === "password") {
+            senha.type = "text";
+            icon.classList.remove("fa-eye");
+            icon.classList.add("fa-eye-slash");
+          } else {
+            senha.type = "password";
+            icon.classList.remove("fa-eye-slash");
+            icon.classList.add("fa-eye");
+          }
+        });
+      }
+    })();
+  </script>
 </body>
 </html>
