@@ -45,7 +45,6 @@ const animateCounters = () => {
       const target = counter.innerText
       const count = +counter.getAttribute("data-count") || 0
 
-      // Extrair apenas números do texto
       const targetNumber = Number.parseInt(target.replace(/[^\d]/g, ""))
 
       if (!targetNumber) return
@@ -55,7 +54,6 @@ const animateCounters = () => {
       if (count < targetNumber) {
         counter.setAttribute("data-count", Math.ceil(count + inc))
 
-        // Manter formatação original
         if (target.includes("R$")) {
           counter.innerText = `R$ ${Math.ceil(count + inc).toLocaleString("pt-BR")}`
         } else if (target.includes("MW")) {
@@ -91,7 +89,6 @@ const observer = new IntersectionObserver((entries) => {
         animateCounters()
       }
 
-      // Adicionar classe de animação para cards
       const cards = entry.target.querySelectorAll(".feature-card, .solution-card")
       cards.forEach((card, index) => {
         setTimeout(() => {
@@ -103,12 +100,10 @@ const observer = new IntersectionObserver((entries) => {
   })
 }, observerOptions)
 
-// Observar seções para animações
 document.querySelectorAll(".features, .stats, .solutions").forEach((section) => {
   observer.observe(section)
 })
 
-// Inicializar cards com estado inicial para animação
 document.querySelectorAll(".feature-card, .solution-card").forEach((card) => {
   card.style.opacity = "0"
   card.style.transform = "translateY(20px)"
@@ -173,3 +168,66 @@ style.textContent = `
     }
 `
 document.head.appendChild(style)
+
+// ==============================
+// 3) LOGIN E CONSUMO DA API
+// ==============================
+document.addEventListener("DOMContentLoaded", () => {
+  const loginForm = document.getElementById("loginForm")
+  if (loginForm) {
+    loginForm.addEventListener("submit", async (e) => {
+      e.preventDefault()
+      const email = document.getElementById("email").value
+      const senha = document.getElementById("senha").value
+
+      try {
+        const resposta = await fetch("https://sua-api-privada.com/login", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email, senha })
+        })
+
+        if (!resposta.ok) throw new Error("Login falhou")
+
+        const dados = await resposta.json()
+        localStorage.setItem("token", dados.token)
+
+        alert("Login realizado com sucesso!")
+        window.location.href = "index.html"
+      } catch (erro) {
+        alert("Erro: " + erro.message)
+      }
+    })
+  }
+})
+
+async function carregarDados() {
+  const token = localStorage.getItem("token")
+  if (!token) return
+
+  try {
+    const resposta = await fetch("https://sua-api-privada.com/dados", {
+      method: "GET",
+      headers: {
+        "Authorization": `Bearer ${token}`,
+        "Content-Type": "application/json"
+      }
+    })
+
+    if (!resposta.ok) throw new Error("Erro ao buscar dados")
+
+    const dados = await resposta.json()
+    const container = document.getElementById("dadosApi")
+    if (container) {
+      container.innerHTML = `
+        <p><strong>Usuário:</strong> ${dados.usuario}</p>
+        <p><strong>Consumo Atual:</strong> ${dados.consumo} kWh</p>
+        <p><strong>Economia Estimada:</strong> R$ ${dados.economia}</p>
+      `
+    }
+  } catch (erro) {
+    console.error("Erro:", erro)
+  }
+}
+
+document.addEventListener("DOMContentLoaded", carregarDados)
